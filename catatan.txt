@@ -1,0 +1,2 @@
+part    = 2
+section = membuat dummy data
