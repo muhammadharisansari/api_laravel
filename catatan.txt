@@ -1,2 +1,2 @@
-part    = 2
-section = membuat dummy data
+part    = 3
+section = penutup
