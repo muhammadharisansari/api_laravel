@@ -1,5 +1,5 @@
-part    = 5
-section = penutup
+part    = 6
+section = membuat resource comment
 
 note:
 - buat middleware untuk login
