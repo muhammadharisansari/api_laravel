@@ -6,7 +6,6 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PostResource;
-use App\Http\Resources\PostCollection;
 use App\Http\Resources\PostDetailResource;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,14 +14,14 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::with('writer:id,username')->orderBy('id','DESC')->get();
-        return PostResource::collection($posts);
+        return PostResource::collection($posts->loadMissing(['comments:id,post_id,user_id,comments_content,created_at']));
     }
 
     public function show($id)
     {
         $post = Post::with('writer:id,username')->findOrFail($id);
         // return response()->json(['data'=>$post]);
-        return new PostDetailResource($post);
+        return new PostDetailResource($post->loadMissing(['comments:id,post_id,user_id,comments_content,created_at']));
     }
 
     public function store(Request $request)
