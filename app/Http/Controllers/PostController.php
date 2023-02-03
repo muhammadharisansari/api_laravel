@@ -6,8 +6,9 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PostResource;
-use App\Http\Resources\PostDetailResource;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Resources\PostDetailResource;
 
 class PostController extends Controller
 {
@@ -26,14 +27,34 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
+        // return $request->file;
         $request->validate([
             'title'          => 'required|max:100',
             'news_content'   => 'required',
         ]);
 
+        if ($request->file) {
+            $fileName = $this->generateRandomString();
+            $extension = $request->file->extension();
+
+            $name = $fileName.'.'.$extension;
+            Storage::putFileAs('image', $request->file, $name);
+            $request['image'] = url('api_laravel/storage/app/image/'.$name);
+        }
+
         $request['author'] = Auth::user()->id;
         $post = Post::create($request->all());
         return new PostDetailResource($post->loadMissing('writer:id,username'));
+    }
+
+    function generateRandomString($length = 5) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[random_int(0, $charactersLength - 1)];
+        }
+        return $randomString;
     }
 
     public function update(Request $request, $id)
