@@ -3,5 +3,4 @@ section = penutup
 
 note:
 - buat middleware untuk login
-- atur timezone
-- tambah update file di upload file
+- tambah update file di upload file (bermasalah)

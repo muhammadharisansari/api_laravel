@@ -24,6 +24,7 @@ class CommentController extends Controller
 
     public function update(Request $request, $id)
     {
+        dd($request->all());
         $request->validate([
             'comments_content'  => 'required',
         ]);
