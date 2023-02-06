@@ -2,5 +2,3 @@ part    = 6
 section = penutup
 
 note:
-- buat middleware untuk login
-- tambah update file di upload file (bermasalah)

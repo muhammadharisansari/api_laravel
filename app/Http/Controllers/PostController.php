@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\PostDetailResource;
+use Illuminate\Validation\Rules\Exists;
 
 class PostController extends Controller
 {
@@ -39,7 +40,6 @@ class PostController extends Controller
 
             $name = uniqid().'.'.$extension;
             $path = Storage::putFileAs('images', $request->file, $name);
-            // $request['image'] = url('storage/app/public/'.$name);
             $request['image'] = url('storage/'.$path);
         }
 
@@ -48,18 +48,38 @@ class PostController extends Controller
         return new PostDetailResource($post->loadMissing('writer:id,username'));
     }
 
-    // public function update(Request $request, $id)
-    // {
-    //     dd($request->all());
-        // $request->validate([
-        //     'title'          => 'required|max:100',
-        //     'news_content'   => 'required',
-        // ]);
+    public function update(Request $request, $id)
+    {
+        // dd($request->all());
+        $request->validate([
+            'title'          => 'required|max:100',
+            'news_content'   => 'required',
+        ]);
+        
+        $post = Post::findOrFail($id);
 
-        // $post = Post::findOrFail($id);
-        // $post->update($request->all());
-        // return new PostDetailResource($post->loadMissing('writer:id,username'));
-    // }
+        if ($request->file) {
+
+            if ($post->image != null) {
+                // Path image Lama
+                $imageLama = public_path('storage/images/' . substr($post->image,37));
+                // Cek Apakah ada filenya
+                if(File::exists($imageLama)){
+                    // Jika File tersebut ada hapus File tersebut
+                    File::delete($imageLama);
+                }
+            }
+
+            $extension = $request->file->extension();
+
+            $name = uniqid().'.'.$extension;
+            $path = Storage::putFileAs('images', $request->file, $name);
+            $request['image'] = url('storage/'.$path);
+        }
+
+        $post->update($request->all());
+        return new PostDetailResource($post->loadMissing('writer:id,username'));
+    }
 
     public function destroy($id)
     {

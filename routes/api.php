@@ -31,8 +31,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/me',[AuthenticationController::class,'me']);
     
     Route::post('/posts',[PostController::class,'store']);
-    // Route::put('/posts/{id}',[CobaController::class,'update'])->middleware('pemilik-postingan');
-    Route::put('/posts/{id}',[CobaController::class,'update']);
+    Route::put('/posts/{id}',[PostController::class,'update'])->middleware('pemilik-postingan');
     Route::delete('/posts/{id}',[PostController::class,'destroy'])->middleware('pemilik-postingan');
     
     Route::post('/comment',[CommentController::class,'store']);
